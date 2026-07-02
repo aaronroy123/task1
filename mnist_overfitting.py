@@ -46,6 +46,28 @@ class OverfittingMLP(nn.Module):
         return logits
 
 
+class NormalMLP(nn.Module):
+    """
+    A standard, smaller Multi-Layer Perceptron designed to serve as a baseline.
+    It has sufficient capacity to learn MNIST but is less prone to extreme overfitting.
+    """
+    def __init__(self):
+        super(NormalMLP, self).__init__()
+        self.flatten = nn.Flatten()
+        
+        self.network = nn.Sequential(
+            nn.Linear(28 * 28, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 10)
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        return self.network(x)
+
+
 # ---------------------------------------------------------
 # 2. Data Preparation Function
 # ---------------------------------------------------------
@@ -233,12 +255,62 @@ def plot_history(history, title, filename):
     print(f"Plot saved to {filename}")
     plt.close()
 
+def plot_comparison(hist_dict, title, filename):
+    plt.figure(figsize=(12, 5))
+    
+    # Plot Validation Loss
+    plt.subplot(1, 2, 1)
+    for label, hist in hist_dict.items():
+        epochs = range(1, len(hist['val_loss']) + 1)
+        plt.plot(epochs, hist['val_loss'], label=label)
+    plt.title(f'{title} - Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    
+    # Plot Validation Accuracy
+    plt.subplot(1, 2, 2)
+    for label, hist in hist_dict.items():
+        epochs = range(1, len(hist['val_acc']) + 1)
+        plt.plot(epochs, hist['val_acc'], label=label)
+    plt.title(f'{title} - Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    
+    plt.tight_layout()
+    plt.savefig(filename)
+    print(f"Comparison plot saved to {filename}")
+    plt.close()
 
 # ---------------------------------------------------------
 # Main Execution
 # ---------------------------------------------------------
 if __name__ == "__main__":
     epochs = 20
+
+    print("="*50)
+    print("PHASE 0: BASELINE (NORMAL) MODEL")
+    print("="*50)
+    
+    # 1. Data without augmentation
+    train_loader_base, val_loader_base, test_loader = get_dataloaders(use_augmentation=False)
+    
+    # 2. Instantiate and train model
+    model_normal = NormalMLP().to(device)
+    print("Training Normal Baseline Model...")
+    history_normal = train_model(
+        model=model_normal, 
+        train_loader=train_loader_base, 
+        val_loader=val_loader_base, 
+        epochs=epochs, 
+        weight_decay=0.0
+    )
+    
+    # 3. Test and plot
+    test_model(model_normal, test_loader, name="Normal Model")
+    plot_history(history_normal, "Phase 0: Baseline Normal Model", "phase_0_-_normal.png")
+    print("\n")
 
     print("="*50)
     print("PHASE 1: OVERFITTING THE MODEL")
@@ -284,5 +356,16 @@ if __name__ == "__main__":
     # 3. Test and plot
     test_model(model_regularized, test_loader, name="Regularized Model")
     plot_history(history_regularized, "Phase 2: Regularized", "phase_2_-_regularization.png")
+    
+    print("\n" + "="*50)
+    print("PHASE 3: COMPARING ALL MODELS")
+    print("="*50)
+    
+    histories = {
+        "Baseline (Normal)": history_normal,
+        "Overfitted": history_overfit,
+        "Regularized": history_regularized
+    }
+    plot_comparison(histories, "Model Comparison", "comparison.png")
     
     print("\nProcess Complete!")

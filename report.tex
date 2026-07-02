@@ -144,9 +144,28 @@ This creates additional variations of the images during training and improves mo
 
 %----------------------------------------
 
-\subsection{Model Architecture}
+\subsection{Model Architectures}
 
-The project uses a very large Multi-Layer Perceptron (MLP) named \texttt{OverfittingMLP}.
+The project uses two different Multi-Layer Perceptron (MLP) architectures to demonstrate the effect of model capacity on overfitting.
+
+\subsubsection{NormalMLP (Baseline)}
+
+The \texttt{NormalMLP} is a standard, moderately sized neural network that serves as our baseline.
+
+Architecture:
+
+\begin{itemize}
+\item Input Layer: 784 neurons
+\item Hidden Layer 1: 128 neurons + ReLU
+\item Hidden Layer 2: 64 neurons + ReLU
+\item Output Layer: 10 neurons representing digit classes.
+\end{itemize}
+
+This network has sufficient capacity to learn the MNIST dataset without being extremely prone to memorization.
+
+\subsubsection{OverfittingMLP}
+
+The \texttt{OverfittingMLP} is a very large network specifically designed to overfit.
 
 Architecture:
 
@@ -204,7 +223,35 @@ The model with the lowest validation loss is automatically saved using early sto
 
 \section{Experiments and Results}
 
-The experiment consists of two phases.
+The experiment consists of three phases.
+
+%----------------------------------------
+
+\subsection{Phase 0: Baseline (Normal Model)}
+
+This phase establishes a baseline using the \texttt{NormalMLP} model without any regularization.
+
+Configuration:
+
+\begin{itemize}
+\item No Data Augmentation
+\item Weight Decay = 0
+\end{itemize}
+
+\subsubsection*{Expected Result}
+
+The model is expected to learn the dataset and achieve good accuracy. Since it has a moderate capacity, it might show slight overfitting towards the later epochs, but it shouldn't be as extreme as a high-capacity model.
+
+\subsubsection*{Result}
+
+The graph below shows the performance of the baseline model.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{phase_0_-_normal.png}
+\caption{Training and Validation Curves for the Baseline Normal Model}
+\label{fig:normal}
+\end{figure}
 
 %----------------------------------------
 
@@ -306,27 +353,34 @@ The graph below illustrates the improvement after applying regularization.
 
 %----------------------------------------
 
-\section{Discussion}
+\section{Discussion: Comparison of the Three Phases}
 
-The comparison between both experiments clearly demonstrates the effect of overfitting.
+The comparison between all three phases clearly demonstrates the effect of model capacity and regularization.
 
-Without regularization, the model memorizes the training data, resulting in poor performance on unseen data.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{comparison.png}
+\caption{Comparison of Validation Performance Across All Models}
+\label{fig:comparison}
+\end{figure}
 
-Applying Data Augmentation and $L_2$ Regularization forces the network to learn more meaningful features rather than memorizing individual samples.
-
-Consequently, validation performance improves and the model generalizes better.
+\begin{itemize}
+\item \textbf{Phase 0 (Baseline Normal Model):} With moderate capacity, the model learns the dataset effectively and generalizes well, showing only minor overfitting. \textbf{Final Test Accuracy: 97.35\%}
+\item \textbf{Phase 1 (Overfitted High-Capacity Model):} Without regularization, the extremely large model memorizes the training data. This results in near-zero training loss and 100\% training accuracy, but validation performance degrades and lags behind the baseline, clearly indicating severe overfitting. \textbf{Final Test Accuracy: 98.00\%}
+\item \textbf{Phase 2 (Regularized High-Capacity Model):} Applying Data Augmentation and $L_2$ Regularization forces the same high-capacity network to learn meaningful, robust features. Consequently, validation performance significantly improves, matching or exceeding the baseline, while the gap between training and validation performance is vastly reduced. \textbf{Final Test Accuracy: 98.62\%}
+\end{itemize}
 
 %----------------------------------------
 
 \section{Conclusion}
 
-This project successfully demonstrates both the occurrence of overfitting and the effectiveness of regularization techniques.
+This project successfully demonstrates the occurrence of overfitting and the effectiveness of regularization techniques across three distinct phases.
 
-A high-capacity neural network was intentionally trained to memorize the MNIST dataset. The resulting gap between training and validation performance clearly illustrated overfitting.
+A baseline normal model provided a strong standard for expected performance. When a high-capacity neural network was intentionally trained without regularization, it memorized the MNIST dataset. The resulting gap between training and validation performance, along with degraded validation metrics compared to the baseline, clearly illustrated severe overfitting.
 
-By introducing Data Augmentation and $L_2$ Regularization, the model achieved significantly better generalization while maintaining high accuracy.
+By introducing Data Augmentation and $L_2$ Regularization, the high-capacity model achieved significantly better generalization. It matched or exceeded the baseline performance while effectively mitigating the overfitting observed in the unregularized version.
 
-These techniques are widely used in modern deep learning systems because they improve robustness and reduce the likelihood of overfitting.
+These techniques are widely used in modern deep learning systems because they improve robustness and reduce the likelihood of overfitting, allowing for the use of large, powerful models.
 
 %----------------------------------------
 
