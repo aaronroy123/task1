@@ -56,11 +56,11 @@ class NormalMLP(nn.Module):
         self.flatten = nn.Flatten()
         
         self.network = nn.Sequential(
-            nn.Linear(28 * 28, 128),
+            nn.Linear(28 * 28, 64),
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Linear(64, 10)
+            nn.Linear(32, 10)
         )
 
     def forward(self, x):
@@ -234,8 +234,8 @@ def plot_history(history, title, filename):
     
     # Plot Loss
     plt.subplot(1, 2, 1)
-    plt.plot(epochs, history['train_loss'], label='Train Loss', color='blue')
-    plt.plot(epochs, history['val_loss'], label='Validation Loss', color='red')
+    plt.plot(epochs, history['train_loss'], label='Train Loss')
+    plt.plot(epochs, history['val_loss'], label='Val Loss')
     plt.title(f'{title} - Loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
@@ -243,8 +243,8 @@ def plot_history(history, title, filename):
     
     # Plot Accuracy
     plt.subplot(1, 2, 2)
-    plt.plot(epochs, history['train_acc'], label='Train Accuracy', color='blue')
-    plt.plot(epochs, history['val_acc'], label='Validation Accuracy', color='red')
+    plt.plot(epochs, history['train_acc'], label='Train Acc')
+    plt.plot(epochs, history['val_acc'], label='Val Acc')
     plt.title(f'{title} - Accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
@@ -287,7 +287,7 @@ def plot_comparison(hist_dict, title, filename):
 # Main Execution
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    epochs = 20
+    epochs = 15
 
     print("="*50)
     print("PHASE 0: BASELINE (NORMAL) MODEL")
