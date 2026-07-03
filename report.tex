@@ -365,9 +365,9 @@ The comparison between all three phases clearly demonstrates the effect of model
 \end{figure}
 
 \begin{itemize}
-\item \textbf{Phase 0 (Baseline Normal Model):} With moderate capacity, the model learns the dataset effectively and generalizes well, showing only minor overfitting. \textbf{Final Test Accuracy: 97.35\%}
+\item \textbf{Phase 0 (Baseline Normal Model):} With moderate capacity, the model learns the dataset effectively and generalizes well, showing only minor overfitting. \textbf{Final Test Accuracy: 97.20\%}
 \item \textbf{Phase 1 (Overfitted High-Capacity Model):} Without regularization, the extremely large model memorizes the training data. This results in near-zero training loss and 100\% training accuracy, but validation performance degrades and lags behind the baseline, clearly indicating severe overfitting. \textbf{Final Test Accuracy: 98.00\%}
-\item \textbf{Phase 2 (Regularized High-Capacity Model):} Applying Data Augmentation and $L_2$ Regularization forces the same high-capacity network to learn meaningful, robust features. Consequently, validation performance significantly improves, matching or exceeding the baseline, while the gap between training and validation performance is vastly reduced. \textbf{Final Test Accuracy: 98.62\%}
+\item \textbf{Phase 2 (Regularized High-Capacity Model):} Applying Data Augmentation and $L_2$ Regularization forces the same high-capacity network to learn meaningful, robust features. Consequently, validation performance significantly improves, matching or exceeding the baseline, while the gap between training and validation performance is vastly reduced. \textbf{Final Test Accuracy: 98.41\%}
 \end{itemize}
 
 %----------------------------------------
